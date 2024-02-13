@@ -3,6 +3,8 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+TARGET_YEAR = '23'
+
 
 def load_page(page_num: int) -> str:
     data_path = Path(__file__).parent / 'data'
@@ -47,9 +49,11 @@ def main():
                                resolved_datetime=rows[6].text.strip())
                 out_row['sensor_value'] = ' '.join(out_row['sensor_value'].split())
                 year = out_row['datetime'][6:8]
-                if year < '23':
+                if year < TARGET_YEAR:
                     print(f'Finished on page {page_num} at date {out_row["datetime"]}')
                     return
+                if TARGET_YEAR < year:
+                    continue
                 writer.writerow(out_row)
 
 
