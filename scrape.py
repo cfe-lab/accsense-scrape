@@ -5,7 +5,11 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright, Browser
 
-TARGET_YEAR = '22'
+TARGET_YEAR = '23'
+# Pass in login credentials through environment variables.
+GATEWAY_MAC = os.environ['GATEWAY_MAC']
+LOGIN = os.environ['LOGIN']
+PASSWORD = os.environ['PASSWORD']
 
 
 class Session:
@@ -15,16 +19,13 @@ class Session:
         self.page_num = -1
 
     def fetch_page(self, page_num: int) -> str:
-        gateway_mac = os.environ['GATEWAY_MAC']
-        login = os.environ['LOGIN']
-        password = os.environ['PASSWORD']
         page = self.page
         history_timeout = 30_000  # in ms
         if self.page_num < 0:
             page.goto('https://secure.sensornetworkonline.com/SSIWeb/')
-            page.locator('[id="login:mac"]').fill(gateway_mac)
-            page.locator('[id="login:loginName"]').fill(login)
-            page.locator('[id="login:password"]').fill(password)
+            page.locator('[id="login:mac"]').fill(GATEWAY_MAC)
+            page.locator('[id="login:loginName"]').fill(LOGIN)
+            page.locator('[id="login:password"]').fill(PASSWORD)
             page.get_by_role('button', name='Login').click(timeout=5_000)
             page.goto('https://secure.sensornetworkonline.com/SSIWeb/app/haccp'
                       '/alarmHistPopup.faces?firstAlarmFetch=0&maxAlarmFetch=256',
